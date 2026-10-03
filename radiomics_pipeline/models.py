@@ -92,14 +92,42 @@ SCALERS = {"standard": StandardScaler, "robust": RobustScaler, "minmax": MinMaxS
            "quantile": lambda: QuantileTransformer(output_distribution="normal", n_quantiles=50)}
 
 
+class SafeSampler(BaseEstimator):
+    """Wrap an imbalanced-learn sampler; return the data unchanged when the sampler cannot
+    resample (fold already balanced, or too few minority samples for the neighbours)."""
+
+    def __init__(self, sampler=None):
+        self.sampler = sampler
+
+    def fit_resample(self, X, y, **kw):
+        y = np.asarray(y)
+        counts = np.bincount(y)
+        try:
+            if counts.min() == counts.max():
+                return X, y
+            s = clone(self.sampler)
+            k = getattr(s, "k_neighbors", getattr(s, "n_neighbors", None))
+            if isinstance(k, int) and counts[counts > 0].min() <= k:
+                s.set_params(**{"k_neighbors" if hasattr(s, "k_neighbors") else "n_neighbors":
+                                max(1, int(counts[counts > 0].min()) - 1)})
+            return s.fit_resample(X, y)
+        except (ValueError, RuntimeError) as e:
+            log.debug("sampler skipped: %s", e)
+            return X, y
+
+    def fit(self, X, y):
+        return self
+
+
 def _sampler(name: str, seed: int):
     if name in ("none", "class_weight", None):
         return None
     from imblearn.over_sampling import ADASYN, SMOTE
     from imblearn.under_sampling import RandomUnderSampler
 
-    return {"smote": SMOTE(random_state=seed, k_neighbors=3), "adasyn": ADASYN(random_state=seed, n_neighbors=3),
-            "undersample": RandomUnderSampler(random_state=seed)}[name]
+    return SafeSampler({"smote": SMOTE(random_state=seed, k_neighbors=3),
+                        "adasyn": ADASYN(random_state=seed, n_neighbors=3),
+                        "undersample": RandomUnderSampler(random_state=seed)}[name])
 
 
 def build_pipeline(selector: str, model: str, cfg: dict, y) -> tuple[object, dict]:
