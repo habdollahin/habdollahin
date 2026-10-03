@@ -13,6 +13,11 @@ each control point. Cross-attention between the two branches is the fusion step.
 > calculation. Do not use them for treatment without independent verification. The
 > exported RTDOSE is labelled `DoseVLM predicted dose`.
 
+> 📊 This repository also contains a separate, general-purpose **radiomics pipeline**:
+> DICOM + masks → preprocessing → registration → PyRadiomics → feature selection →
+> nested-CV machine learning → ROC, calibration and full metrics report. See
+> [`radiomics_pipeline/README.md`](radiomics_pipeline/README.md).
+
 ---
 
 ## Pipeline

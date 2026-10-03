@@ -1,0 +1,100 @@
+# Radiomics pipeline - full configuration. Every key is optional (defaults in
+# radiomics_pipeline/config.py). Run:  python -m radiomics_pipeline run --config configs/radiomics.yaml
+seed: 42
+n_jobs: 4                       # parallel patients (extraction) / combinations (modelling)
+output_dir: runs/radiomics
+
+data:
+  root: data/radiomics          # data/radiomics/<patient>/... one folder per patient
+  patient_glob: "*"
+  patient_id_regex: null        # e.g. "(PAT\\d+)" to pull the ID out of the folder name
+  image_subdir: null            # e.g. "CT*" if the image series lives in a sub-folder
+  modalities: [CT, MR, PT]
+  series_description_regex: null   # MR: pick a sequence, e.g. "t2_tse|T2W"
+  mask_pattern: ["*mask*", "*seg*", "*label*", "RS*", "*RTSTRUCT*"]
+  mask_format: auto             # auto | nifti | rtstruct | seg | dicom_series
+  roi_name_regex: null          # RTSTRUCT ROI / SEG segment, e.g. "^GTV"
+  mask_label: null              # pick one label of a multi-label NIfTI
+  mask_reference_pattern: null  # image the mask was drawn on -> enables registration, e.g. "*T2*"
+  suv: false                    # PET: convert Bq/ml to SUVbw
+
+preprocess:
+  clip_range: null              # CT e.g. [-1000, 2000]
+  n4_bias_correction: false     # MR: true
+  denoise:
+    method: curvature_flow      # none | gaussian | median | bilateral | curvature_flow | anisotropic | patch_based
+    iterations: 3
+    time_step: 0.0625
+  resample:
+    enabled: true
+    spacing: [1.0, 1.0, 1.0]    # mm, isotropic (IBSI)
+    interpolator: bspline       # nearest | linear | bspline | lanczos
+  normalize:
+    method: none                # CT: none (keep HU). MR: zscore (+ bin_count) or zscore_roi; PET: none (SUV)
+    # scale: 100                # for zscore with fixed bin width
+  save_preprocessed: false      # write preprocessed image/mask NIfTI per patient
+  qc_png: true                  # tri-planar overlay per patient in <out>/features/qc
+
+mask:
+  keep_largest_component: false
+  fill_holes: true
+  min_voxels: 10
+
+registration:
+  method: auto                  # auto | resample | rigid | affine | bspline | none
+  metric: mattes
+  iterations: 200
+
+features:
+  bin_width: 25                 # CT HU: fixed bin width (IBSI). Set null to use bin_count (MR)
+  bin_count: 32
+  resegment_range: null         # e.g. [-150, 250] soft tissue
+  image_types:
+    Original: {}
+    LoG: {sigma: [1.0, 2.0, 3.0, 4.0]}
+    Wavelet: {}
+    # Square: {}
+    # SquareRoot: {}
+    # Logarithm: {}
+    # Exponential: {}
+    # Gradient: {}
+    # LBP3D: {}
+  feature_classes: [firstorder, shape, glcm, glrlm, glszm, gldm, ngtdm]
+  force_2d: false
+  robustness:                   # erode/dilate mask, keep features with ICC(3,1) >= threshold
+    enabled: true
+    perturbations: [-1, 1]
+    icc_threshold: 0.75
+
+labels:
+  file: data/radiomics/labels.xlsx
+  sheet: 0
+  id_column: PatientID
+  label_column: Label
+  positive_class: null          # e.g. "malignant"
+  id_normalization: [strip, lower, alnum, nozeros]
+  clinical_columns: []          # e.g. [Age, Sex] -> combined clinical-radiomics model
+  split_column: null            # column with train/test values (external validation)
+  group_column: null            # e.g. patient when several lesions per patient
+
+modeling:
+  test_size: 0.25
+  outer_folds: 5
+  outer_repeats: 2
+  inner_folds: 3
+  search: optuna                # grid | random | halving | optuna
+  n_iter: 25
+  scoring: roc_auc
+  scaler: standard              # standard | robust | minmax | quantile
+  correlation_threshold: 0.9
+  imbalance: class_weight       # none | class_weight | smote | adasyn | undersample
+  calibration: null             # null | sigmoid | isotonic
+  # all: none variance anova mannwhitney mutual_info fdr mrmr lasso elasticnet rfe_svm rfe_lr rf_importance extratrees boruta relieff
+  selectors: [mannwhitney, mrmr, lasso, rf_importance, relieff]   # boruta is thorough but slow
+  selector_k: [5, 10, 15, 20]   # tuned in the inner loop
+  # all: logistic svm random_forest extra_trees gradient_boosting adaboost xgboost lightgbm catboost knn naive_bayes lda mlp
+  models: [logistic, svm, random_forest, extra_trees, xgboost, lightgbm, naive_bayes, mlp]
+  ensemble_top_n: 3
+  threshold: youden             # youden | 0.5 | f1 | sens90 | spec90
+  n_bootstrap: 2000
+  shap: true

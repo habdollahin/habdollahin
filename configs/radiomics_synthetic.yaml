@@ -1,0 +1,34 @@
+# Fast smoke-test configuration for the synthetic cohort:
+#   python -m radiomics_pipeline synth --out data/radiomics_synth --n 40
+#   python -m radiomics_pipeline run --config configs/radiomics_synthetic.yaml
+seed: 0
+n_jobs: 2
+output_dir: runs/radiomics_synth
+data:
+  root: data/radiomics_synth
+  roi_name_regex: "GTV"
+preprocess:
+  denoise: {method: gaussian, sigma: 0.5}
+  resample: {enabled: true, spacing: [1.5, 1.5, 1.5], interpolator: bspline}
+features:
+  bin_width: 10
+  image_types: {Original: {}, LoG: {sigma: [2.0]}}
+  robustness: {enabled: true, perturbations: [-1, 1], icc_threshold: 0.75}
+labels:
+  file: data/radiomics_synth/labels.xlsx
+  id_column: Patient ID
+  label_column: Outcome
+  positive_class: positive
+  id_normalization: [strip, lower]
+  clinical_columns: [Age]
+modeling:
+  test_size: 0.3
+  outer_folds: 3
+  inner_folds: 3
+  search: random
+  n_iter: 4
+  selectors: [anova, mrmr, lasso]
+  selector_k: [3, 6]
+  models: [logistic, random_forest, xgboost]
+  ensemble_top_n: 3
+  n_bootstrap: 200
