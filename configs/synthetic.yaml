@@ -1,0 +1,32 @@
+# Tiny configuration for the synthetic smoke test (runs on CPU in minutes).
+preprocess:
+  spacing: [4.0, 4.0, 4.0]
+  shape: [48, 64, 64]
+  max_cp_tokens: 64
+
+data:
+  train: ["data/synthetic_npz"]
+  val: []
+  val_fraction: 0.2
+  patch_size: null
+  cache: true
+
+model:
+  dim: 64
+  channels: [8, 16, 32, 64]
+  fusion_depth: 1
+  heads: 4
+  plan_depth: 1
+  text_depth: 1
+
+loss: {l1: 1.0, ptv: 1.0, dvh: 0.5, grad: 0.1}
+
+train:
+  output_dir: runs/synthetic
+  epochs: 30
+  batch_size: 2
+  lr: 2.0e-3
+  warmup_steps: 20
+  amp: false
+  num_workers: 0
+  val_every: 5

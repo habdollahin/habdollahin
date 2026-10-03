@@ -1,0 +1,50 @@
+# DoseVLM default configuration (clinical-scale). See configs/synthetic.yaml for a tiny smoke-test config.
+preprocess:
+  spacing: [3.0, 3.0, 3.0]      # mm, (x, y, z) of the resampled model grid
+  shape: [128, 128, 128]        # voxels, (z, y, x) -> 38.4 cm cube centred on the PTV
+  site: null                    # optional text e.g. "head and neck", added to the plan description
+  max_cp_tokens: 128            # control-point tokens per plan (merged if more)
+  # oars:                       # optional override of canonical OAR channels -> regex aliases
+  #   SpinalCord: ["^(spinal_?)?cord"]
+
+data:
+  train: ["data/npz/train"]     # directories / globs / files of preprocessed .npz samples
+  val: ["data/npz/val"]         # leave empty to hold out val_fraction of train
+  val_fraction: 0.15
+  patch_size: [96, 96, 96]      # random training crops (null = full volume)
+  ptv_focus: 0.5                # probability that a crop is centred on a PTV voxel
+  cache: false
+
+model:
+  dim: 256                      # width of plan/text tokens and bottleneck transformer
+  channels: [32, 64, 128, 256, 320]
+  fusion_depth: 4               # bottleneck vision-language transformer blocks
+  heads: 8
+  plan_depth: 2
+  text_depth: 2
+  text_max_len: 256
+  dropout: 0.0
+  hf_text_model: null           # e.g. "microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract" (needs `transformers`)
+  freeze_text: true
+
+loss:
+  l1: 1.0                       # MAE inside body (relative dose)
+  ptv: 1.0                      # extra MAE inside PTV
+  dvh: 0.5                      # sorted-dose (DVH / Wasserstein) loss per structure
+  grad: 0.1                     # dose-gradient (penumbra) loss
+
+train:
+  output_dir: runs/dosevlm
+  epochs: 300
+  batch_size: 2
+  grad_accum: 1
+  lr: 3.0e-4
+  weight_decay: 1.0e-4
+  warmup_steps: 500
+  grad_clip: 1.0
+  amp: true
+  num_workers: 4
+  val_every: 5
+  seed: 42
+  device: null                  # auto
+  resume: null

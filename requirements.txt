@@ -1,0 +1,10 @@
+torch>=2.1
+numpy>=1.24
+scipy>=1.10
+scikit-image>=0.21
+pydicom>=2.4
+pyyaml>=6.0
+# optional: pretrained clinical/biomedical text encoder
+# transformers>=4.40
+# tests
+pytest>=7
