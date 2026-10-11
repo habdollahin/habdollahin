@@ -150,3 +150,9 @@ python -m pytest -q tests     # covers DICOM I/O, geometry, export round-trip, m
   * *Plan-specific dose*: control-point MU and MLC apertures are also in the input. For
     the plan-specific mode to be meaningful, the RTPLAN must be the delivered and
     optimised plan.
+
+## Further reading
+
+* [Predictive virtual trials using medical imaging: a short review](docs/predictive_virtual_trials_review.md).
+  It covers in silico imaging and radiotherapy trials, how credible they are, and how
+  DoseVLM can act as the dose engine for virtual trial arms.
