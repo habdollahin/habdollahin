@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 1260" width="1800" height="1260" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="75%">
+      <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF2F8"/>
+    </radialGradient>
+    <radialGradient id="core" cx="50%" cy="45%" r="60%">
+      <stop offset="0" stop-color="#1B2A4A"/><stop offset="1" stop-color="#0A1226"/>
+    </radialGradient>
+    <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0F8B8D"/><stop offset="0.25" stop-color="#4C5FD5"/>
+      <stop offset="0.5" stop-color="#8E44AD"/><stop offset="0.75" stop-color="#E67E22"/>
+      <stop offset="1" stop-color="#C0392B"/>
+    </linearGradient>
+    <linearGradient id="bodyG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9FB3D1"/><stop offset="1" stop-color="#5E7398"/>
+    </linearGradient>
+    <radialGradient id="hot">
+      <stop offset="0" stop-color="#FFFFE0"/><stop offset="0.25" stop-color="#FFE14D"/>
+      <stop offset="0.55" stop-color="#FF5A1F"/><stop offset="1" stop-color="#C0000F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="warm">
+      <stop offset="0" stop-color="#FFB13B"/><stop offset="0.5" stop-color="#E8461C" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#9E0010" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#1B2A4A" flood-opacity="0.18"/>
+    </filter>
+    <filter id="glow"><feGaussianBlur stdDeviation="3"/></filter>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6B7A99"/>
+    </marker>
+    <path id="arcTop" d="M 640,560 A 260,260 0 0 1 1160,560"/>
+    <path id="arcBot" d="M 628,560 A 272,272 0 0 0 1172,560"/>
+  </defs>
+
+  <rect width="1800" height="1260" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="900" y="62" text-anchor="middle" font-size="40" font-weight="700" fill="#1B2A4A">Molecular Imaging &amp; Theranostics for Personalized Therapy</text>
+  <text x="900" y="104" text-anchor="middle" font-size="21" font-style="italic" fill="#4A5878">How can molecular imaging and theranostics capture biological heterogeneity and optimize patient-specific therapy?</text>
+
+  <!-- Connectors -->
+  <g stroke="#6B7A99" stroke-width="2.5" fill="none" stroke-dasharray="7 6" marker-end="url(#arr)">
+    <path d="M 560,290 C 630,295 650,330 676,366"/>
+    <path d="M 1240,290 C 1170,295 1150,330 1124,366"/>
+    <path d="M 560,640 L 604,640"/>
+    <path d="M 1240,640 L 1196,640"/>
+    <path d="M 900,900 L 900,858"/>
+  </g>
+
+  <!-- Central picture -->
+  <g filter="url(#shadow)">
+    <circle cx="900" cy="560" r="290" fill="url(#ring)"/>
+    <circle cx="900" cy="560" r="248" fill="url(#core)"/>
+  </g>
+  <text font-size="17" font-weight="700" fill="#FFFFFF" letter-spacing="4">
+    <textPath href="#arcTop" startOffset="50%" text-anchor="middle">IMAGING  •  BIOLOGY  •  PHYSICS  •  AI</textPath>
+  </text>
+  <text font-size="17" font-weight="700" fill="#FFFFFF" letter-spacing="4" dominant-baseline="hanging">
+    <textPath href="#arcBot" startOffset="50%" text-anchor="middle">TREAT WHAT YOU SEE</textPath>
+  </text>
+
+  <!-- faint grid / scanner rings -->
+  <g stroke="#3C5A8A" stroke-width="1" fill="none" opacity="0.5">
+    <circle cx="900" cy="560" r="225" stroke-dasharray="2 6"/>
+    <line x1="660" y1="560" x2="1140" y2="560" stroke-dasharray="2 8"/>
+    <line x1="900" y1="320" x2="900" y2="800" stroke-dasharray="2 8"/>
+  </g>
+
+  <!-- Patient body (PET MIP style) -->
+  <g fill="url(#bodyG)" opacity="0.55">
+    <circle cx="900" cy="378" r="30"/>
+    <rect x="887" y="402" width="26" height="28" rx="6"/>
+    <path d="M 828,438 Q 900,422 972,438 Q 985,445 982,470 L 966,560 Q 962,590 968,622 L 832,622 Q 838,590 834,560 L 818,470 Q 815,445 828,438 Z"/>
+    <path d="M 826,442 Q 808,450 804,480 L 792,580 Q 788,610 784,640 L 800,642 Q 806,612 812,586 L 830,500 Z"/>
+    <path d="M 974,442 Q 992,450 996,480 L 1008,580 Q 1012,610 1016,640 L 1000,642 Q 994,612 988,586 L 970,500 Z"/>
+    <path d="M 834,618 L 898,618 L 892,700 L 884,762 L 860,762 L 852,700 Z"/>
+    <path d="M 902,618 L 966,618 L 948,700 L 940,762 L 916,762 L 908,700 Z"/>
+  </g>
+  <!-- tracer uptake -->
+  <g>
+    <circle cx="885" cy="418" r="11" fill="url(#warm)"/>
+    <circle cx="915" cy="418" r="11" fill="url(#warm)"/>
+    <ellipse cx="878" cy="548" rx="14" ry="20" fill="url(#warm)"/>
+    <ellipse cx="922" cy="548" rx="14" ry="20" fill="url(#warm)"/>
+    <ellipse cx="900" cy="635" rx="16" ry="12" fill="url(#warm)" opacity="0.8"/>
+    <circle cx="902" cy="606" r="17" fill="url(#hot)"/>
+    <circle cx="936" cy="580" r="12" fill="url(#hot)"/>
+    <circle cx="858" cy="478" r="13" fill="url(#hot)"/>
+    <circle cx="900" cy="512" r="11" fill="url(#hot)"/>
+    <circle cx="872" cy="690" r="13" fill="url(#hot)"/>
+    <circle cx="952" cy="462" r="10" fill="url(#hot)"/>
+  </g>
+  <!-- dose isocontours around primary lesion -->
+  <g fill="none" stroke-width="1.6">
+    <ellipse cx="902" cy="606" rx="30" ry="26" stroke="#7CF3D4" opacity="0.9"/>
+    <ellipse cx="902" cy="606" rx="44" ry="38" stroke="#7CF3D4" opacity="0.55" stroke-dasharray="4 3"/>
+  </g>
+  <!-- mini time-activity curve -->
+  <g transform="translate(1000,668)">
+    <rect x="0" y="0" width="98" height="64" rx="8" fill="#0A1226" stroke="#3C5A8A"/>
+    <path d="M 10,52 L 88,52 M 10,52 L 10,10" stroke="#7F93B8" stroke-width="1.2"/>
+    <path d="M 10,52 C 18,10 26,14 36,22 S 62,40 88,46" stroke="#FFD24D" stroke-width="2.4" fill="none"/>
+    <text x="49" y="62" text-anchor="middle" font-size="9" fill="#AFC0DE">TAC</text>
+  </g>
+  <!-- mini voxel dose map -->
+  <g transform="translate(702,668)">
+    <rect x="0" y="0" width="98" height="64" rx="8" fill="#0A1226" stroke="#3C5A8A"/>
+    <g transform="translate(14,8)">
+      <rect x="0"  y="0"  width="14" height="14" fill="#3B4CC0"/><rect x="14" y="0"  width="14" height="14" fill="#7B9FF9"/><rect x="28" y="0"  width="14" height="14" fill="#C0D4F5"/><rect x="42" y="0"  width="14" height="14" fill="#7B9FF9"/><rect x="56" y="0"  width="14" height="14" fill="#3B4CC0"/>
+      <rect x="0"  y="14" width="14" height="14" fill="#7B9FF9"/><rect x="14" y="14" width="14" height="14" fill="#F2CBB7"/><rect x="28" y="14" width="14" height="14" fill="#EE8468"/><rect x="42" y="14" width="14" height="14" fill="#F2CBB7"/><rect x="56" y="14" width="14" height="14" fill="#7B9FF9"/>
+      <rect x="0"  y="28" width="14" height="14" fill="#C0D4F5"/><rect x="14" y="28" width="14" height="14" fill="#EE8468"/><rect x="28" y="28" width="14" height="14" fill="#B40426"/><rect x="42" y="28" width="14" height="14" fill="#EE8468"/><rect x="56" y="28" width="14" height="14" fill="#C0D4F5"/>
+    </g>
+    <text x="49" y="62" text-anchor="middle" font-size="9" fill="#AFC0DE">Voxel dose</text>
+  </g>
+  <text x="900" y="790" text-anchor="middle" font-size="14" font-weight="700" fill="#FFFFFF" letter-spacing="1">PATIENT DIGITAL TWIN</text>
+
+  <!-- ===== Aim boxes ===== -->
+  <!-- 5.1 -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="160" width="510" height="250" rx="18" fill="#FFFFFF"/>
+    <path d="M 68,160 H 542 A 18 18 0 0 1 560,178 V 222 H 50 V 178 A 18 18 0 0 1 68,160 Z" fill="#0F8B8D"/>
+  </g>
+  <circle cx="92" cy="191" r="20" fill="#FFFFFF"/><text x="92" y="198" text-anchor="middle" font-size="18" font-weight="700" fill="#0F8B8D">1</text>
+  <text x="124" y="200" font-size="23" font-weight="700" fill="#FFFFFF">Imaging Biomarkers</text>
+  <g fill="#FFFFFF" opacity="0.9"><rect x="500" y="196" width="8" height="14"/><rect x="512" y="186" width="8" height="24"/><rect x="524" y="178" width="8" height="32"/><rect x="536" y="192" width="8" height="18"/></g>
+  <g font-size="18" fill="#2B3654">
+    <text x="78" y="260">• PET/CT, SPECT &amp; MRI radiomics with AI</text>
+    <text x="78" y="294">• Quantify receptor expression, hypoxia,</text>
+    <text x="94" y="318">microenvironment &amp; heterogeneity</text>
+    <text x="78" y="352">• PSMA &amp; DOTATATE: stratify, select,</text>
+    <text x="94" y="376">and monitor patients</text>
+  </g>
+
+  <!-- 5.2 -->
+  <g filter="url(#shadow)">
+    <rect x="1240" y="160" width="510" height="250" rx="18" fill="#FFFFFF"/>
+    <path d="M 1258,160 H 1732 A 18 18 0 0 1 1750,178 V 222 H 1240 V 178 A 18 18 0 0 1 1258,160 Z" fill="#4C5FD5"/>
+  </g>
+  <circle cx="1282" cy="191" r="20" fill="#FFFFFF"/><text x="1282" y="198" text-anchor="middle" font-size="18" font-weight="700" fill="#4C5FD5">2</text>
+  <text x="1314" y="200" font-size="23" font-weight="700" fill="#FFFFFF">AI-Enhanced Molecular Imaging</text>
+  <g stroke="#FFFFFF" stroke-width="1.3" opacity="0.9"><line x1="1696" y1="180" x2="1718" y2="191"/><line x1="1696" y1="202" x2="1718" y2="191"/><line x1="1718" y1="191" x2="1736" y2="182"/><line x1="1718" y1="191" x2="1736" y2="200"/></g>
+  <g fill="#FFFFFF"><circle cx="1696" cy="180" r="4"/><circle cx="1696" cy="202" r="4"/><circle cx="1718" cy="191" r="4"/><circle cx="1736" cy="182" r="4"/><circle cx="1736" cy="200" r="4"/></g>
+  <g font-size="18" fill="#2B3654">
+    <text x="1268" y="260">• Reconstruction, denoising &amp; segmentation</text>
+    <text x="1268" y="294">• Physically consistent, interpretable AI</text>
+    <text x="1268" y="328">• Long axial FOV PET &amp; low-dose protocols</text>
+    <text x="1268" y="362">• Tumor burden &amp; response prediction</text>
+  </g>
+
+  <!-- 5.3 -->
+  <g filter="url(#shadow)">
+    <rect x="50" y="520" width="510" height="250" rx="18" fill="#FFFFFF"/>
+    <path d="M 68,520 H 542 A 18 18 0 0 1 560,538 V 582 H 50 V 538 A 18 18 0 0 1 68,520 Z" fill="#8E44AD"/>
+  </g>
+  <circle cx="92" cy="551" r="20" fill="#FFFFFF"/><text x="92" y="558" text-anchor="middle" font-size="18" font-weight="700" fill="#8E44AD">3</text>
+  <text x="124" y="560" font-size="23" font-weight="700" fill="#FFFFFF">Digital Twins &amp; Personalized RPT</text>
+  <g font-size="18" fill="#2B3654">
+    <text x="78" y="620">• PET activity + PBPK + radiobiology models</text>
+    <text x="78" y="654">• Patient-specific dosimetry</text>
+    <text x="78" y="688">• Optimize activity, timing &amp; no. of cycles</text>
+    <text x="78" y="722">• Heterogeneity-aware outcome prediction</text>
+  </g>
+
+  <!-- 5.4 -->
+  <g filter="url(#shadow)">
+    <rect x="1240" y="520" width="510" height="250" rx="18" fill="#FFFFFF"/>
+    <path d="M 1258,520 H 1732 A 18 18 0 0 1 1750,538 V 582 H 1240 V 538 A 18 18 0 0 1 1258,520 Z" fill="#E67E22"/>
+  </g>
+  <circle cx="1282" cy="551" r="20" fill="#FFFFFF"/><text x="1282" y="558" text-anchor="middle" font-size="18" font-weight="700" fill="#E67E22">4</text>
+  <text x="1314" y="560" font-size="23" font-weight="700" fill="#FFFFFF">Integration with Advanced Therapy</text>
+  <g font-size="18" fill="#2B3654">
+    <text x="1268" y="620">• <tspan font-weight="700">RPT:</tspan> PET-based planning, dose–response</text>
+    <text x="1268" y="654">• <tspan font-weight="700">Proton:</tspan> PET range verification &amp;</text>
+    <text x="1284" y="678">in vivo dosimetry, adaptation</text>
+    <text x="1268" y="712">• <tspan font-weight="700">BGRT:</tspan> real-time imaging signals →</text>
+    <text x="1284" y="736">adaptive radiation delivery</text>
+  </g>
+
+  <!-- 5.5 -->
+  <g filter="url(#shadow)">
+    <rect x="560" y="900" width="680" height="190" rx="18" fill="#FFFFFF"/>
+    <path d="M 578,900 H 1222 A 18 18 0 0 1 1240,918 V 962 H 560 V 918 A 18 18 0 0 1 578,900 Z" fill="#C0392B"/>
+  </g>
+  <circle cx="602" cy="931" r="20" fill="#FFFFFF"/><text x="602" y="938" text-anchor="middle" font-size="18" font-weight="700" fill="#C0392B">5</text>
+  <text x="634" y="940" font-size="23" font-weight="700" fill="#FFFFFF">Virtual Trials &amp; Drug Development</text>
+  <g fill="#FFFFFF" opacity="0.9">
+    <circle cx="1160" cy="923" r="4"/><circle cx="1174" cy="923" r="4"/><circle cx="1188" cy="923" r="4"/><circle cx="1202" cy="923" r="4"/><circle cx="1216" cy="923" r="4"/>
+    <circle cx="1160" cy="939" r="4"/><circle cx="1174" cy="939" r="4"/><circle cx="1188" cy="939" r="4"/><circle cx="1202" cy="939" r="4"/><circle cx="1216" cy="939" r="4"/>
+  </g>
+  <g font-size="18" fill="#2B3654">
+    <text x="588" y="1000">• In silico trials of radiopharmaceutical therapies &amp; new agents</text>
+    <text x="588" y="1034">• Early assessment of biodistribution, target engagement, efficacy</text>
+    <text x="588" y="1068">• Reduce cost &amp; accelerate translation</text>
+  </g>
+
+  <!-- Impact band -->
+  <rect x="50" y="1130" width="1700" height="92" rx="18" fill="#1B2A4A"/>
+  <text x="96" y="1170" font-size="20" font-weight="700" fill="#7CF3D4" letter-spacing="2">IMPACT</text>
+  <text x="96" y="1200" font-size="15" fill="#AFC0DE">Precision oncology in Canada</text>
+  <g font-size="18" fill="#FFFFFF">
+    <text x="420" y="1170">▸ PET-based treatment planning</text>
+    <text x="420" y="1202">▸ Personalized dosimetry in RPT</text>
+    <text x="830" y="1170">▸ Imaging-guided proton therapy &amp; BGRT</text>
+    <text x="830" y="1202">▸ Better patient selection &amp; response prediction</text>
+    <text x="1290" y="1170">▸ Optimized treatment delivery</text>
+    <text x="1290" y="1202">▸ Faster radiopharmaceutical translation</text>
+  </g>
+</svg>
