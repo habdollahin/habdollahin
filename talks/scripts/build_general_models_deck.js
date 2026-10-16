@@ -26,7 +26,8 @@ pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
 pres.title = "Mathematical Models for Digital Twins and Virtual Trials";
 pres.author = "Hamid Abdollahi";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
-const C = pres.SchemeColor;
+// Fixed hex colours (not theme references) so every viewer renders fills, e.g. Google Slides, Keynote, legacy .ppt.
+const C = { text1: HEX.dk1, text2: HEX.dk2, background1: HEX.lt1, background2: HEX.lt2, accent1: HEX.accent1, accent2: HEX.accent2, accent3: HEX.accent3, accent4: HEX.accent4, accent5: HEX.accent5, accent6: HEX.accent6 };
 const EQ = "+mj-lt"; // equations in the heading (serif) font
 const FOOT = "Digital twins & virtual trials  ·  general model catalogue";
 
@@ -78,7 +79,7 @@ const TAGS = {
 function tag(slide, kind, x, y, name) {
   const t = TAGS[kind];
   slide.addText(t.label, {
-    shape: pres.shapes.ROUNDED_RECTANGLE, rectRadius: 0.06, x, y, w: 1.05, h: 0.28,
+    shape: pres.shapes.RECTANGLE, rectRadius: 0.06, x, y, w: 1.05, h: 0.28,
     fill: { color: t.fill }, color: t.color, fontSize: 10, bold: true, align: "center", valign: "middle",
     margin: 0, isTextBox: true, objectName: name || `tag ${t.label}`,
   });
@@ -94,7 +95,7 @@ function content(kicker, title, section) {
 // Equation card: title, equation(s), description, status tag.
 function eqCard(slide, o) {
   const { x, y, w, h, title, eq, desc, kind, eqSize = 16, descSize = 14, eqH } = o;
-  slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+  slide.addShape(pres.shapes.RECTANGLE, {
     x, y, w, h, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `card ${title}`,
   });
   slide.addText(title, { x: x + 0.22, y: y + 0.15, w: w - 1.6, h: 0.38, fontSize: 16, bold: true, color: C.text2, margin: 0, valign: "top", isTextBox: true, objectName: `card title ${title}` });
@@ -144,8 +145,15 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
     cubes: await icon(fa.FaCubes), micro: await icon(fa.FaMicroscope), shield: await icon(fa.FaShieldAlt),
     target: await icon(fa.FaBullseye),
   };
+  // Circles are drawn as PNG images: filled ovals and rounded rectangles lose their fill
+  // in legacy .ppt exports and some viewers, while images and plain rectangles always render.
+  const CIRC = {};
+  for (const hx of [HEX.dk2, HEX.accent1, HEX.accent2, HEX.accent3, HEX.accent4]) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="127" fill="#${hx}"/></svg>`;
+    CIRC[hx] = "image/png;base64," + (await sharp(Buffer.from(svg)).png().toBuffer()).toString("base64");
+  }
   function iconCircle(slide, img, x, y, d = 0.6, fill = C.accent2) {
-    slide.addShape(pres.shapes.OVAL, { x, y, w: d, h: d, fill: { color: fill }, line: { color: fill }, objectName: "icon circle" });
+    slide.addImage({ data: CIRC[fill], x, y, w: d, h: d, objectName: "icon circle" });
     const p = d * 0.22;
     slide.addImage({ data: img, x: x + p, y: y + p, w: d - 2 * p, h: d - 2 * p, objectName: "icon" });
   }
@@ -204,7 +212,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
   loop.forEach(([a, b], i) => {
     const x = 0.6 + i * 2.06, y = 1.85;
     s.addText([{ text: a, options: { bold: true, fontSize: 14, color: C.background1, breakLine: true } }, { text: b, options: { fontSize: 12, color: C.background2 } }], {
-      shape: pres.shapes.ROUNDED_RECTANGLE, rectRadius: 0.1, x, y, w: 1.85, h: 1.2, fill: { color: i === 0 ? C.accent4 : C.text2 }, align: "center", valign: "middle", margin: 0.06, isTextBox: true, objectName: `loop ${a}`,
+      shape: pres.shapes.RECTANGLE, rectRadius: 0.1, x, y, w: 1.85, h: 1.2, fill: { color: i === 0 ? C.accent4 : C.text2 }, align: "center", valign: "middle", margin: 0.06, isTextBox: true, objectName: `loop ${a}`,
     });
     if (i < loop.length - 1) s.addShape(pres.shapes.LINE, { x: x + 1.86, y: y + 0.6, w: 0.19, h: 0, line: { color: C.accent6, width: 1.5, endArrowType: "triangle" }, objectName: "arrow" });
   });
@@ -216,7 +224,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
    ["Virtual cohort", "Many twins sampled from population models (Families 7, 11): realistic, diverse, plausible.", IC.users],
    ["Virtual trial", "Every arm applied to every virtual subject; endpoints analysed with trial statistics.", IC.scale]].forEach(([h, d, img], i) => {
     const x = 0.6 + i * 4.1;
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 4.25, w: 3.85, h: 2.4, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `card ${h}` });
+    s.addShape(pres.shapes.RECTANGLE, { x, y: 4.25, w: 3.85, h: 2.4, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `card ${h}` });
     iconCircle(s, img, x + 0.22, 4.45, 0.55);
     s.addText(h, { x: x + 0.9, y: 4.5, w: 2.8, h: 0.45, fontSize: 17, bold: true, color: C.text2, margin: 0, valign: "middle", isTextBox: true });
     s.addText(d, { x: x + 0.22, y: 5.15, w: 3.45, h: 1.35, fontSize: 14, color: C.text1, margin: 0, valign: "top", isTextBox: true });

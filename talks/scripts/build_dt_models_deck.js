@@ -26,7 +26,8 @@ pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5
 pres.title = "Mathematical Models and AI for Theranostic Digital Twins";
 pres.author = "Hamid Abdollahi";
 pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
-const C = pres.SchemeColor;
+// Fixed hex colours (not theme references) so every viewer renders fills, e.g. Google Slides, Keynote, legacy .ppt.
+const C = { text1: HEX.dk1, text2: HEX.dk2, background1: HEX.lt1, background2: HEX.lt2, accent1: HEX.accent1, accent2: HEX.accent2, accent3: HEX.accent3, accent4: HEX.accent4, accent5: HEX.accent5, accent6: HEX.accent6 };
 const EQ = "+mj-lt"; // equations in the heading (serif) font
 const FOOT = "Digital twins & virtual trials  ·  model catalogue";
 
@@ -78,7 +79,7 @@ const TAGS = {
 function tag(slide, kind, x, y, name) {
   const t = TAGS[kind];
   slide.addText(t.label, {
-    shape: pres.shapes.ROUNDED_RECTANGLE, rectRadius: 0.06, x, y, w: 1.05, h: 0.28,
+    shape: pres.shapes.RECTANGLE, rectRadius: 0.06, x, y, w: 1.05, h: 0.28,
     fill: { color: t.fill }, color: t.color, fontSize: 10, bold: true, align: "center", valign: "middle",
     margin: 0, isTextBox: true, objectName: name || `tag ${t.label}`,
   });
@@ -94,7 +95,7 @@ function content(kicker, title, section) {
 // Equation card: title, equation(s), description, status tag.
 function eqCard(slide, o) {
   const { x, y, w, h, title, eq, desc, kind, eqSize = 16, descSize = 14, eqH } = o;
-  slide.addShape(pres.shapes.ROUNDED_RECTANGLE, {
+  slide.addShape(pres.shapes.RECTANGLE, {
     x, y, w, h, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `card ${title}`,
   });
   slide.addText(title, { x: x + 0.22, y: y + 0.15, w: w - 1.6, h: 0.38, fontSize: 16, bold: true, color: C.text2, margin: 0, valign: "top", isTextBox: true, objectName: `card title ${title}` });
@@ -144,8 +145,15 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
     cubes: await icon(fa.FaCubes), micro: await icon(fa.FaMicroscope), shield: await icon(fa.FaShieldAlt),
     target: await icon(fa.FaBullseye),
   };
+  // Circles are drawn as PNG images: filled ovals and rounded rectangles lose their fill
+  // in legacy .ppt exports and some viewers, while images and plain rectangles always render.
+  const CIRC = {};
+  for (const hx of [HEX.dk2, HEX.accent1, HEX.accent2, HEX.accent3, HEX.accent4]) {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><circle cx="128" cy="128" r="127" fill="#${hx}"/></svg>`;
+    CIRC[hx] = "image/png;base64," + (await sharp(Buffer.from(svg)).png().toBuffer()).toString("base64");
+  }
   function iconCircle(slide, img, x, y, d = 0.6, fill = C.accent2) {
-    slide.addShape(pres.shapes.OVAL, { x, y, w: d, h: d, fill: { color: fill }, line: { color: fill }, objectName: "icon circle" });
+    slide.addImage({ data: CIRC[fill], x, y, w: d, h: d, objectName: "icon circle" });
     const p = d * 0.22;
     slide.addImage({ data: img, x: x + p, y: y + p, w: d - 2 * p, h: d - 2 * p, objectName: "icon" });
   }
@@ -192,7 +200,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
   steps.forEach(([a, b], i) => {
     const x = 0.6 + i * 1.76, y = 1.85;
     s.addText([{ text: a, options: { bold: true, fontSize: 14, color: C.background1, breakLine: true } }, { text: b, options: { fontSize: 12, color: C.background2, fontFace: EQ } }], {
-      shape: pres.shapes.ROUNDED_RECTANGLE, rectRadius: 0.1, x, y, w: 1.55, h: 1.25, fill: { color: i === 6 ? C.accent2 : C.text2 },
+      shape: pres.shapes.RECTANGLE, rectRadius: 0.1, x, y, w: 1.55, h: 1.25, fill: { color: i === 6 ? C.accent2 : C.text2 },
       align: "center", valign: "middle", margin: 0.05, isTextBox: true, objectName: `step ${a}`,
     });
     if (i < steps.length - 1) s.addShape(pres.shapes.LINE, { x: x + 1.56, y: y + 0.625, w: 0.19, h: 0, line: { color: C.accent6, width: 1.5, endArrowType: "triangle" }, objectName: "arrow" });
@@ -210,7 +218,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
   ];
   lower.forEach(([h, d], i) => {
     const x = 0.6 + i * 4.1;
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y: 4.35, w: 3.85, h: 2.3, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `card ${h}` });
+    s.addShape(pres.shapes.RECTANGLE, { x, y: 4.35, w: 3.85, h: 2.3, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `card ${h}` });
     iconCircle(s, [IC.scale, IC.brain, IC.shield][i], x + 0.22, 4.55, 0.55);
     s.addText(h, { x: x + 0.9, y: 4.6, w: 2.8, h: 0.45, fontSize: 17, bold: true, color: C.text2, margin: 0, valign: "middle", isTextBox: true });
     s.addText(d, { x: x + 0.22, y: 5.25, w: 3.45, h: 1.3, fontSize: 14, color: C.text1, margin: 0, valign: "top", isTextBox: true });
@@ -239,7 +247,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
 
   // ================================================================ L2 PBPK
   s = content("LAYER 2 · PHARMACOKINETICS", "PBPK: where the radioligand goes", P1);
-  s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y: 1.7, w: 7.0, h: 4.95, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: "pbpk card" });
+  s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y: 1.7, w: 7.0, h: 4.95, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: "pbpk card" });
   s.addText("Per organ i (¹⁷⁷Lu-PSMA, Cancers 2024)", { x: 0.85, y: 1.85, w: 5.2, h: 0.4, fontSize: 16, bold: true, color: C.text2, margin: 0, isTextBox: true });
   tag(s, "talk", 6.3, 1.9);
   const pbpk = [
@@ -365,7 +373,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
   const flow = [["CT + masks + beam projection", C.text2], ["3-D residual U-Net encoder", C.text2], ["Cross-attention to plan tokens", C.accent2], ["Decoder + FiLM", C.text2], ["Dose / Rx (softplus)", C.accent4]];
   flow.forEach(([t, col], i) => {
     const x = 0.6 + i * 2.47;
-    s.addText(t, { shape: pres.shapes.ROUNDED_RECTANGLE, rectRadius: 0.1, x, y: 1.7, w: 2.2, h: 0.95, fill: { color: col }, color: C.background1, fontSize: 14, bold: true, align: "center", valign: "middle", margin: 0.06, isTextBox: true, objectName: `flow ${t}` });
+    s.addText(t, { shape: pres.shapes.RECTANGLE, rectRadius: 0.1, x, y: 1.7, w: 2.2, h: 0.95, fill: { color: col }, color: C.background1, fontSize: 14, bold: true, align: "center", valign: "middle", margin: 0.06, isTextBox: true, objectName: `flow ${t}` });
     if (i < flow.length - 1) s.addShape(pres.shapes.LINE, { x: x + 2.21, y: 2.175, w: 0.25, h: 0, line: { color: C.accent6, width: 1.5, endArrowType: "triangle" }, objectName: "arrow" });
   });
   s.addText("Plan text + control-point tokens (gantry sin/cos, MU, MLC area) → plan transformer", { x: 3.07, y: 2.75, w: 7.0, h: 0.35, fontSize: 13, italic: true, color: C.accent2, align: "center", margin: 0, isTextBox: true });
@@ -438,7 +446,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
   quad.forEach(([h, m, d, col, img], i) => {
     const col_ = i % 2, row = Math.floor(i / 2);
     const x = 1.4 + col_ * 5.75, y = 1.75 + row * 2.5;
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x, y, w: 5.5, h: 2.3, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `quad ${h}` });
+    s.addShape(pres.shapes.RECTANGLE, { x, y, w: 5.5, h: 2.3, rectRadius: 0.08, fill: { color: C.background2 }, line: { color: C.background2 }, objectName: `quad ${h}` });
     iconCircle(s, img, x + 0.22, y + 0.22, 0.6, col);
     s.addText(h, { x: x + 0.95, y: y + 0.22, w: 4.4, h: 0.6, fontSize: 16, bold: true, color: C.text2, margin: 0, valign: "middle", isTextBox: true });
     s.addText(m, { x: x + 0.22, y: y + 0.95, w: 5.1, h: 0.6, fontSize: 15, bold: true, color: col === C.accent3 ? C.text1 : col, margin: 0, valign: "top", isTextBox: true });
@@ -480,7 +488,7 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
   ];
   sciml.forEach(([n, e, d], i) => {
     const y = 1.7 + i * 1.0;
-    s.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 0.6, y, w: 12.1, h: 0.88, rectRadius: 0.06, fill: { color: i === 2 ? "E2F0EE" : C.background2 }, line: { color: i === 2 ? C.accent2 : C.background2, width: i === 2 ? 1.5 : 0.5 }, objectName: `row ${n}` });
+    s.addShape(pres.shapes.RECTANGLE, { x: 0.6, y, w: 12.1, h: 0.88, rectRadius: 0.06, fill: { color: i === 2 ? "E2F0EE" : C.background2 }, line: { color: i === 2 ? C.accent2 : C.background2, width: i === 2 ? 1.5 : 0.5 }, objectName: `row ${n}` });
     s.addText(n, { x: 0.8, y, w: 1.9, h: 0.88, fontSize: 16, bold: true, color: C.text2, margin: 0, valign: "middle", isTextBox: true });
     s.addText(e, { x: 2.7, y: y + 0.14, w: 4.3, h: 0.6, fontSize: 15, fontFace: EQ, color: C.accent4, fill: { color: C.background1 }, margin: 0.08, valign: "middle", isTextBox: true });
     s.addText(d, { x: 7.2, y, w: 5.35, h: 0.88, fontSize: 14, color: C.text1, margin: 0, valign: "middle", isTextBox: true });
@@ -539,7 +547,8 @@ const CHART_TEXT = { catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-
   ];
   aims.forEach(([n, h, d], i) => {
     const y = 1.75 + i * 0.98;
-    s.addText(n, { shape: pres.shapes.OVAL, x: 0.6, y: y + 0.1, w: 0.65, h: 0.65, fill: { color: C.accent1 }, color: C.text1, fontSize: 20, bold: true, align: "center", valign: "middle", margin: 0, fontFace: EQ, isTextBox: true, objectName: `aim ${n}` });
+    s.addImage({ data: CIRC[HEX.accent1], x: 0.6, y: y + 0.1, w: 0.65, h: 0.65, objectName: "badge" });
+    s.addText(n, { x: 0.6, y: y + 0.1, w: 0.65, h: 0.65, color: C.text1, fontSize: 20, bold: true, align: "center", valign: "middle", margin: 0, fontFace: EQ, isTextBox: true, objectName: `aim ${n}` });
     s.addText(h, { x: 1.5, y, w: 3.4, h: 0.85, fontSize: 18, bold: true, color: C.text2, margin: 0, valign: "middle", isTextBox: true });
     s.addText(d, { x: 4.9, y: y + 0.05, w: 7.8, h: 0.75, fontSize: 15, color: C.text1, fill: { color: C.background2 }, margin: 0.12, valign: "middle", isTextBox: true });
   });
